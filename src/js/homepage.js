@@ -1,33 +1,110 @@
+const languagePack = {
+    "Chinese": {
+        "searchbar_placeholder": "开始搜索",
+        "my_favourites": "我的收藏",
+        "add_favourite": "添加一个收藏",
+        "ask_site_name": "网站名称",
+        "ask_site_link": "网址",
+        "submit": "提交",
+        "confirm": "确定",
+        "cancel": "取消",
+        "reset_default_bookmark": "恢复默认书签",
+        "remove_all_bookmarks": "删除所有书签",
+        "set_default_engine_baidu": "设置百度为默认搜索引擎",
+        "set_default_engine_google": "设置谷歌为默认搜索引擎",
+        "set_default_engine_bing": "设置必应为默认搜索引擎",
+        "reset_all_settings": "全部恢复默认设置",
+        "read_user_manual": "阅读用户手册",
+        "author_homepage": "前往作者首页",
+        "search_use_baidu": "使用百度搜索",
+        "search_use_google": "使用谷歌搜索",
+        "search_use_bing": "使用必应搜索",
+        "ask_input": "请输入任何你想要搜索的内容！",
+        "add_new_favourite_success": "成功添加新收藏！",
+        "ask_fill_all_contents": "请填写网站名和网址！",
+        "remove_favourite_success": "已移除该收藏",
+        "ask_confirm_delete_favourite": "你确定要删除该收藏吗？",
+        "change_language_chinese": "切换为中文",
+        "change_language_english": "Switch language to English"
+    },
+    "English": {
+        "searchbar_placeholder": "Search for something",
+        "my_favourites": "My Favourites",
+        "add_favourite": "Add Favourite",
+        "ask_site_name": "Site Name",
+        "ask_site_link": "Site Link",
+        "submit": "Submit",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "reset_default_bookmark": "Reset default bookmark",
+        "remove_all_bookmarks": "Remove all bookmarks",
+        "set_default_engine_baidu": "Set default search engine to Baidu",
+        "set_default_engine_google": "Set default search engine to Google",
+        "set_default_engine_bing": "Set default search engine to Bing",
+        "reset_all_settings": "Reset all settings",
+        "read_user_manual": "Read user manual",
+        "author_homepage": "Go to author homepage",
+        "search_use_baidu": "Search using Baidu",
+        "search_use_google": "Search using Google",
+        "search_use_bing": "Search using Bing",
+        "ask_input": "Type anything you want to search!",
+        "add_new_favourite_success": "Added new favourite!",
+        "ask_fill_all_contents": "Please fill both site name and link!",
+        "remove_favourite_success": "Removed favourite",
+        "ask_confirm_delete_favourite": "Are you sure you want to remove this bookmark?",
+        "change_language_chinese": "切换为中文",
+        "change_language_english": "Switch language to English"
+    }
+};
+
+getText = (text) => {
+    var language_pack = localStorage.getItem("language_pack");
+    if(!language_pack) {
+        localStorage.setItem("language_pack", "Chinese");
+        language_pack = "Chinese";
+    }
+    
+    return languagePack[language_pack][text];
+}
+
+setLanguage = (language) => {
+    localStorage.setItem("language_pack", language);
+    location.reload();
+}
+
 const favouritePage = [
     // 0
-    "<h1>My Favourites</h1>" +
+    "<h1>"+getText("my_favourites")+"</h1>" +
     "<div class='Favourites'>",
     // 1
-        "<a href='javascript:void(0);' class='SignleBlock AddNew' onclick='newFavouriteAlert()'>" +
+        "<a href='javascript:void(0);' class='SignleBlock AddNew' onclick='newFavouriteAlert()' title='"+getText("add_favourite")+"'>" +
             "<img src='src/pics/plus.svg' />" +
         "</a>" +
     "</div>"
 ];
 
 const addNewFavourite = 
-    "<label>Site Name</label><br>" +
+    "<label>"+getText("ask_site_name")+"</label><br>" +
     "<input type='text' id='site_name'><br>" +
-    "<label>Site Link</label><br>" +
+    "<label>"+getText("ask_site_link")+"</label><br>" +
     "<input type='text' id='site_link'><br>" +
-    "<button onclick='favouriteSubmit()'>Submit</button>" +
-    "<button onclick='hideAlertWindow()'>Cancel</button>";
+    "<button onclick='favouriteSubmit()'>"+getText("submit")+"</button>" +
+    "<button onclick='hideAlertWindow()'>"+getText("cancel")+"</button>";
 
 const static_setting_menu = 
-    "<button onclick="+'"'+"resetFavourite('reset')"+'"'+">Reset default bookmark</button>" +
-    "<button onclick="+'"'+"resetFavourite('remove')"+'"'+">Remove all bookmarks</button>" +
+    "<button onclick="+'"'+"resetFavourite('reset')"+'"'+">"+getText("reset_default_bookmark")+"</button>" +
+    "<button onclick="+'"'+"resetFavourite('remove')"+'"'+">"+getText("remove_all_bookmarks")+"</button>" +
     "<hr>" +
-    "<button onclick="+'"'+"setDefaultEngine('Baidu')"+'"'+">Set default search engine to Baidu</button>" +
-    "<button onclick="+'"'+"setDefaultEngine('Google')"+'"'+">Set default search engine to Google</button>" +
-    "<button onclick="+'"'+"setDefaultEngine('Bing')"+'"'+">Set default search engine to Bing</button>" +
+    "<button onclick="+'"'+"setDefaultEngine('Baidu')"+'"'+">"+getText("set_default_engine_baidu")+"</button>" +
+    "<button onclick="+'"'+"setDefaultEngine('Google')"+'"'+">"+getText("set_default_engine_google")+"</button>" +
+    "<button onclick="+'"'+"setDefaultEngine('Bing')"+'"'+">"+getText("set_default_engine_bing")+"</button>" +
     "<hr>" +
-    "<button onclick='resetAll()'>Reset all settings</button>" +
-    "<button onclick='userManual()'>Read user manual</button>" +
-    "<button onclick='authorHomePage()'>Go to author homepage</button>";
+    "<button onclick="+'"'+"setLanguage('Chinese')"+'"'+">"+getText("change_language_chinese")+"</button>" +
+    "<button onclick="+'"'+"setLanguage('English')"+'"'+">"+getText("change_language_english")+"</button>" +
+    "<hr>" +
+    "<button onclick='resetAll()'>"+getText("reset_all_settings")+"</button>" +
+    "<button onclick='userManual()'>"+getText("read_user_manual")+"</button>" +
+    "<button onclick='authorHomePage()'>"+getText("author_homepage")+"</button>";
 
 const static_user_manual =
     "<div class='Part Left'>" +
@@ -106,17 +183,20 @@ searchSubmit = (event) => {
         document.body.removeChild(search);
         kwrds.value = "";
     } else
-        popupAlert("Type anything you want to search!");
+        popupAlert(getText("ask_input"));
 }
 
 favouriteSubmit = () => {
 
     const site_name = document.getElementById("site_name").value;
-    const site_link = document.getElementById("site_link").value;
+    var site_link = document.getElementById("site_link").value;
 
     if(site_name && site_link) {
         var favourites = JSON.parse(localStorage.getItem("favourites"));
         var existed = false;
+
+        if(!/^((http)|(https):\/\/)/.test(site_link))
+            site_link = "https://"+site_link;
 
         for(var i = 0; i < favourites.length; i++) {
             f = JSON.parse(favourites[i]);
@@ -132,11 +212,11 @@ favouriteSubmit = () => {
 
         localStorage.setItem("favourites", JSON.stringify(favourites));
         hideAlertWindow();
-        popupAlert("Add new favourite success!");
+        popupAlert(getText("add_new_favourite_success"));
         redrawFavouritePage();
 
     } else
-        popupAlert("Please fill site name and site link!");
+        popupAlert(getText("ask_fill_all_contents"));
 }
 
 removeFavouritSubmit = (index) => {
@@ -144,7 +224,7 @@ removeFavouritSubmit = (index) => {
     favourites.splice(index, 1);
     localStorage.setItem("favourites", JSON.stringify(favourites));
     hideAlertWindow();
-    popupAlert("Remove favourite success!");
+    popupAlert(getText("remove_favourite_success"));
     redrawFavouritePage();
 }
 
@@ -172,10 +252,10 @@ loadContent = () => {
     content.innerHTML = 
         "<h1 class='Time' id='Time'></h1>" +
         "<form class='SearchForm' onsubmit='searchSubmit(event)'>" +
-            "<input type='text' class='SearchBar' id='SearchBar' placeholder='Search for something' autocomplete='off'><br>" +
-            "<input type='radio' "+ (default_search_engine === "Baidu" ? "checked" : "") +" value='baidu' name='SearchEngine' title='Search using Baidu'>" +
-            "<input type='radio' "+ (default_search_engine === "Google" ? "checked" : "") +" value='google' name='SearchEngine' title='Search using Google'>" +
-            "<input type='radio' "+ (default_search_engine === "Bing" ? "checked" : "") +" value='bing' name='SearchEngine' title='Search using Bing'>" +
+            "<input type='text' class='SearchBar' id='SearchBar' placeholder='"+getText('searchbar_placeholder')+"' autocomplete='off'><br>" +
+            "<input type='radio' "+ (default_search_engine === "Baidu" ? "checked" : "") +" value='baidu' name='SearchEngine' title='"+getText("search_use_baidu")+"'>" +
+            "<input type='radio' "+ (default_search_engine === "Google" ? "checked" : "") +" value='google' name='SearchEngine' title='"+getText("search_use_google")+"'>" +
+            "<input type='radio' "+ (default_search_engine === "Bing" ? "checked" : "") +" value='bing' name='SearchEngine' title='"+getText("search_use_bing")+"'>" +
         "</form>";
 
     loadTime();
@@ -226,7 +306,7 @@ generateFavouritePage = () => {
             f = JSON.parse(favourites[i]);
 
             page += 
-            "<a href='" + f.site + "' class='SignleBlock' target='_blank'>" +
+            "<a href='" + f.site + "' class='SignleBlock' target='_blank' title='" + f.site + "'>" +
                 "<div class='BlockCover'></div>" +
                 "<img src='" + f.site + "/favicon.ico'>" +
                 "<p>" + f.name + "</p>" +
@@ -401,9 +481,9 @@ newFavouriteAlert = () => {
 }
 
 removeFavouritAlert = (index) => {
-    AlertWindow("Are you sure you want to<br>remove this bookmark?<br>"+
-                "<button onclick='removeFavouritSubmit("+index+")'>Confirm</button>"+
-                "<button onclick='hideAlertWindow()'>Cancel</button>");
+    AlertWindow(getText("ask_confirm_delete_favourite")+"<br>"+
+                "<button onclick='removeFavouritSubmit("+index+")'>"+getText("confirm")+"</button>"+
+                "<button onclick='hideAlertWindow()'>"+getText("cancel")+"</button>");
 }
 
 closeUserManual = async (cover, manual) => {
