@@ -25,7 +25,9 @@ const languagePack = {
         "remove_favourite_success": "已移除该收藏",
         "ask_confirm_delete_favourite": "你确定要删除该收藏吗？",
         "change_language_chinese": "切换为中文",
-        "change_language_english": "Switch language to English"
+        "change_language_english": "Switch language to English",
+        "save_settings": "导出设置",
+        "load_settings": "导入设置"
     },
     "English": {
         "searchbar_placeholder": "Search for something",
@@ -53,7 +55,9 @@ const languagePack = {
         "remove_favourite_success": "Removed favourite",
         "ask_confirm_delete_favourite": "Are you sure you want to remove this bookmark?",
         "change_language_chinese": "切换为中文",
-        "change_language_english": "Switch language to English"
+        "change_language_english": "Switch language to English",
+        "save_settings": "Save Settings",
+        "load_settings": "Load Settings"
     }
 };
 
@@ -102,12 +106,15 @@ const static_setting_menu =
     "<button onclick="+'"'+"setLanguage('Chinese')"+'"'+">"+getText("change_language_chinese")+"</button>" +
     "<button onclick="+'"'+"setLanguage('English')"+'"'+">"+getText("change_language_english")+"</button>" +
     "<hr>" +
+    "<button onclick="+'"'+"SLSetting('save')"+'"'+">"+getText("save_settings")+"</button>" +
+    "<button onclick="+'"'+"SLSetting('load')"+'"'+">"+getText("load_settings")+"</button>" +
+    "<hr>" +
     "<button onclick='resetAll()'>"+getText("reset_all_settings")+"</button>" +
     "<button onclick='userManual()'>"+getText("read_user_manual")+"</button>" +
     "<button onclick='authorHomePage()'>"+getText("author_homepage")+"</button>";
 
 const static_user_manual =
-    "<div class='Part Left'>" +
+    "<div class='Part'>" +
         "<h1>用户手册</h1>" +
         "<hr>" +
         "<h3>&bull; 搜索功能: </h3>" +
@@ -129,10 +136,14 @@ const static_user_manual =
         "<hr>" +
         "<h3>&bull; 全局 </h3>" +
         "<p>在页面的任意地方点击鼠标右键可以打开书签页。</p>" +
-        "<p>若想更改背景图片，请将新图片放入src/pics/，并将其更名为background.png</p>" +
+        "<p>若想更改背景图片，请将新图片放入src/pics/，并将其更名为background.png。</p>" +
+        "<hr>" +
+        "<h3>&bull; 导入 / 导出设置 </h3>" +
+        "<p>导出设置将会下载 homepage.setting 文件， 请保存好此文件。<br>当你导入设置时，选择该文件即可自动导入。</p>" +
+        "<hr>" +
         "<p>&bull; 左键单击任意位置退出此页</p>" +
     "</div>" +
-    "<div class='Part' style='right: 0;'>" +
+    "<div class='Part Right'>" +
         "<h1>User Manual</h1>" +
         "<hr>" +
         "<h3>&bull; Search: </h3>" +
@@ -154,7 +165,13 @@ const static_user_manual =
         "<hr>" +
         "<h3>&bull; Global: </h3>" +
         "<p>Right click on anypart of this website can display your favourites.</p>" +
-        "<p>If you want to change background image, please place the new image at src/pics/<br>and change its name to background.png</p>" +
+        "<p>If you want to change background image, please place the new image at src/pics/<br>and change its name to background.png.</p>" +
+        "<hr>" +
+        "<h3>&bull; Save / Load settings </h3>" +
+        "<p>When save settings, a file called homepage.setting will be downloaded.</p>" +
+        "<p>Please keep this file safely and when you want to load setting, just select this file</p>" +
+        "<p>And settings will be loaded automatically.</p>" +
+        "<hr>" +
         "<p>&bull; Left-click anywhere to left this page.</p>" +
     "</div>";
 
@@ -513,6 +530,49 @@ userManual = async () => {
     manual.style.transform = "none";
 
     cover.addEventListener('click', () => closeUserManual(cover, manual));
+}
+
+SLSetting = (action) => {
+    if(action === "save") {
+        const settings = {
+            language_pack: localStorage.getItem("language_pack"),
+            favourites: localStorage.getItem("favourites"),
+            default_search_engine: localStorage.getItem("default_search_engine")
+        };
+
+        const setting_str = JSON.stringify(settings);
+
+        const download = document.createElement("a");
+        download.href = "data:text/plain;charset=utf-8,"+setting_str;
+        download.download = "homepage.setting";
+
+        document.body.appendChild(download);
+        download.click();
+        document.body.removeChild(download);
+
+    } else if(action === "load") {
+
+        handleSettingFile = (event) => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = () => {
+                const result = JSON.parse(reader.result);
+                localStorage.setItem("language_pack", result.language_pack);
+                localStorage.setItem("favourites", result.favourites);
+                localStorage.setItem("default_search_engine", result.default_search_engine);
+                location.reload();
+            }
+        };
+
+        const get_setting = document.createElement("input");
+        get_setting.type = "file";
+        get_setting.accept = ".setting";
+        get_setting.onchange = handleSettingFile;
+        document.body.appendChild(get_setting);
+        get_setting.click();
+        document.body.removeChild(get_setting);
+    }
 }
 
 window.onload = () => {
