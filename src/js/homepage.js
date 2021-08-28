@@ -1,0 +1,445 @@
+const favouritePage = [
+    // 0
+    "<h1>My Favourites</h1>" +
+    "<div class='Favourites'>",
+    // 1
+        "<a href='javascript:void(0);' class='SignleBlock AddNew' onclick='newFavouriteAlert()'>" +
+            "<img src='src/pics/plus.svg' />" +
+        "</a>" +
+    "</div>"
+];
+
+const addNewFavourite = 
+    "<label>Site Name</label><br>" +
+    "<input type='text' id='site_name'><br>" +
+    "<label>Site Link</label><br>" +
+    "<input type='text' id='site_link'><br>" +
+    "<button onclick='favouriteSubmit()'>Submit</button>" +
+    "<button onclick='hideAlertWindow()'>Cancel</button>";
+
+const static_setting_menu = 
+    "<button onclick="+'"'+"resetFavourite('reset')"+'"'+">Reset default bookmark</button>" +
+    "<button onclick="+'"'+"resetFavourite('remove')"+'"'+">Remove all bookmarks</button>" +
+    "<hr>" +
+    "<button onclick="+'"'+"setDefaultEngine('Baidu')"+'"'+">Set default search engine to Baidu</button>" +
+    "<button onclick="+'"'+"setDefaultEngine('Google')"+'"'+">Set default search engine to Google</button>" +
+    "<button onclick="+'"'+"setDefaultEngine('Bing')"+'"'+">Set default search engine to Bing</button>" +
+    "<hr>" +
+    "<button onclick='resetAll()'>Reset all settings</button>" +
+    "<button onclick='userManual()'>Read user manual</button>" +
+    "<button onclick='authorHomePage()'>Go to author homepage</button>";
+
+const static_user_manual =
+    "<div class='Part Left'>" +
+        "<h1>用户手册</h1>" +
+        "<hr>" +
+        "<h3>&bull; 搜索功能: </h3>" +
+        "<p>在屏幕中间的搜索栏中输入关键字进行搜索。</p>" +
+        "<p>使用搜索栏下面的三个单选按钮可以切换搜索引擎。</p>" +
+        "<p>可切换的搜索引擎从左往右分别为：百度，谷歌，必应。</p>" +
+        "<p>把光标悬浮在单选按钮上可查看其对应的搜索引擎。</p>" +
+        "<hr>" +
+        "<h3>&bull; 我的最爱 / 书签页： </h3>" +
+        "<p>点击右上角的书签按钮可以打开书签页。</p>" +
+        "<p>点击一个书签可以在新建标签页中自动跳转至对应网页。</p>" +
+        "<p>右键点击一个书签可以删除书签。</p>" +
+        "<p>拖动书签可以改变书签位置。</p>" +
+        "<p>点击书签栏最后一个带 + 号的按钮可以添加新书签。</p>" +
+        "<hr>" +
+        "<h3>&bull; 设置： </h3>" +
+        "<p>点击右上角的书签按钮可以打开设置。</p>" +
+        "<p>请发掘各种各样的设置吧！</p>" +
+        "<hr>" +
+        "<h3>&bull; 全局 </h3>" +
+        "<p>在页面的任意地方点击鼠标右键可以打开书签页。</p>" +
+        "<p>若想更改背景图片，请将新图片放入src/pics/，并将其更名为background.png</p>" +
+        "<p>&bull; 左键单击任意位置退出此页</p>" +
+    "</div>" +
+    "<div class='Part' style='right: 0;'>" +
+        "<h1>User Manual</h1>" +
+        "<hr>" +
+        "<h3>&bull; Search: </h3>" +
+        "<p>Search keyword in the text bar at the middle of your screen.</p>" +
+        "<p>You can choose to change search engine by click the radio button under text bar.</p>" +
+        "<p>Radio buttons represent Baidu, Google and bing from left to right.</p>" +
+        "<p>Place your cursor on radio buttons can see which search engine they represents.</p>" +
+        "<hr>" +
+        "<h3>&bull; Favourite / Bookmarks: </h3>" +
+        "<p>Click bookmark button on the top-right corner to display Favourites</p>" +
+        "<p>Click a favourite can guid you to that website in a new blank page.</p>" +
+        "<p>Right-click on a favourite can delete that favourite.</p>" +
+        "<p>Drag a favourite can change the order of it.</p>" +
+        "<p>Click favourite block at the end of favourites with + sign can add a new favourite.</p>" +
+        "<hr>" +
+        "<h3>&bull; Settings: </h3>" +
+        "<p>Click setting button on the top-right corner to display settings.</p>" +
+        "<p>There are various settings to explore.</p>" +
+        "<hr>" +
+        "<h3>&bull; Global: </h3>" +
+        "<p>Right click on anypart of this website can display your favourites.</p>" +
+        "<p>If you want to change background image, please place the new image at src/pics/<br>and change its name to background.png</p>" +
+        "<p>&bull; Left-click anywhere to left this page.</p>" +
+    "</div>";
+
+var occupied = false;
+
+searchSubmit = (event) => {
+    event.preventDefault();
+
+    const kwrds = document.getElementById("SearchBar");
+    if(kwrds.value) {
+        const engine = document.querySelector("input[name='SearchEngine']:checked").value;
+        
+        const search = document.createElement("a");
+        search.target = "_blank";
+        const search_value = kwrds.value;
+
+        switch(engine) {
+            case "baidu": search.href = "https://www.baidu.com/s?wd=" + search_value.replaceAll(' ', '%20') ; break;
+            case "google": search.href = "https://www.google.com/search?q=" + search_value.replaceAll(' ', '+'); break;
+            case "bing": search.href = "https://www.bing.com/search?q=" + search_value.replaceAll(' ', '+'); break;
+            default:;
+        }
+
+        document.body.appendChild(search);
+        search.click();
+        document.body.removeChild(search);
+        kwrds.value = "";
+    } else
+        popupAlert("Type anything you want to search!");
+}
+
+favouriteSubmit = () => {
+
+    const site_name = document.getElementById("site_name").value;
+    const site_link = document.getElementById("site_link").value;
+
+    if(site_name && site_link) {
+        var favourites = JSON.parse(localStorage.getItem("favourites"));
+        var existed = false;
+
+        for(var i = 0; i < favourites.length; i++) {
+            f = JSON.parse(favourites[i]);
+
+            if(f.name === site_name && f.site === site_link) {
+                existed = true;
+                break;
+            }
+        }
+
+        if(!existed)
+            favourites.push(JSON.stringify({name: site_name, site: site_link }));
+
+        localStorage.setItem("favourites", JSON.stringify(favourites));
+        hideAlertWindow();
+        popupAlert("Add new favourite success!");
+        redrawFavouritePage();
+
+    } else
+        popupAlert("Please fill site name and site link!");
+}
+
+removeFavouritSubmit = (index) => {
+    var favourites = JSON.parse(localStorage.getItem("favourites"));
+    favourites.splice(index, 1);
+    localStorage.setItem("favourites", JSON.stringify(favourites));
+    hideAlertWindow();
+    popupAlert("Remove favourite success!");
+    redrawFavouritePage();
+}
+
+loadTime = () => {
+    const display_time = document.getElementById("Time");
+
+    const time = new Date();
+    display_time.innerHTML = (time.getHours() < 10 ? "0"+time.getHours() : time.getHours() )
+                             + " : " +
+                             (time.getMinutes() < 10 ? "0"+time.getMinutes() : time.getMinutes() )
+
+    setTimeout(loadTime, 1000);
+}
+
+loadContent = () => {
+    const content = document.getElementById("content");
+    var default_search_engine;
+    if(localStorage.getItem("default_search_engine")) {
+        default_search_engine = localStorage.getItem("default_search_engine");
+    } else {
+        localStorage.setItem("default_search_engine", "Google");
+        default_search_engine = "Google";
+    }
+
+    content.innerHTML = 
+        "<h1 class='Time' id='Time'></h1>" +
+        "<form class='SearchForm' onsubmit='searchSubmit(event)'>" +
+            "<input type='text' class='SearchBar' id='SearchBar' placeholder='Search for something' autocomplete='off'><br>" +
+            "<input type='radio' "+ (default_search_engine === "Baidu" ? "checked" : "") +" value='baidu' name='SearchEngine' title='Search using Baidu'>" +
+            "<input type='radio' "+ (default_search_engine === "Google" ? "checked" : "") +" value='google' name='SearchEngine' title='Search using Google'>" +
+            "<input type='radio' "+ (default_search_engine === "Bing" ? "checked" : "") +" value='bing' name='SearchEngine' title='Search using Bing'>" +
+        "</form>";
+
+    loadTime();
+}
+
+resetAll = () => {
+    localStorage.clear();
+    loadContent();
+    redrawFavouritePage();
+    generateSettingMenu();
+}
+
+setDefaultEngine = (engine) => {
+    localStorage.setItem("default_search_engine", engine);
+    loadContent();
+    generateSettingMenu();
+}
+
+resetFavourite = (action) => {
+    if(action === "reset") {
+        localStorage.removeItem('favourites');
+    } else if(action === "remove") {
+        localStorage.setItem('favourites', '[]');
+    }
+
+    redrawFavouritePage();
+    generateSettingMenu();
+}
+
+authorHomePage = () => {
+    generateSettingMenu();
+    const link = document.createElement("a");
+    link.href = "https://github.com/cbh778899";
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    line.remove();
+}
+
+generateFavouritePage = () => {
+
+    var favourites = JSON.parse(localStorage.getItem("favourites"));
+    var page = favouritePage[0];
+
+    if(favourites) {
+        
+        for(var i = 0; i < favourites.length; i++) {
+            f = JSON.parse(favourites[i]);
+
+            page += 
+            "<a href='" + f.site + "' class='SignleBlock' target='_blank'>" +
+                "<div class='BlockCover'></div>" +
+                "<img src='" + f.site + "/favicon.ico'>" +
+                "<p>" + f.name + "</p>" +
+            "</a>";
+        }
+
+        page += favouritePage[1];
+        
+        return page;
+
+    } else {
+        favourites = [
+            {site: "https://www.baidu.com", name: "百度"},
+            {site: "https://www.google.com", name: "谷歌"},
+            {site: "https://www.bilibili.com", name: "哔哩哔哩"},
+            {site: "https://www.youtube.com", name: "Youtube"},
+            {site: "https://fanyi.baidu.com", name: "百度翻译"},
+            {site: "https://translate.google.com", name: "谷歌翻译"}
+        ];
+
+        var fav_arr = [];
+        favourites.forEach((f) => {
+            fav_arr.push(JSON.stringify(f));
+        });
+        localStorage.setItem("favourites", JSON.stringify(fav_arr));
+        return generateFavouritePage();
+    }
+}
+
+generateSettingMenu = async () => {
+    if(document.getElementById("SettingMenu")) {
+        const setting_menu = document.getElementById("SettingMenu");
+        setting_menu.style.top = "-5vh";
+        setting_menu.style.transform = "scaleY(0.1)";
+
+        await new Promise((s) => {setTimeout(s, 1000)});
+        setting_menu.remove();
+    } else {
+        const setting_menu = document.createElement("div");
+        setting_menu.className = "SettingMenu";
+        setting_menu.id = "SettingMenu";
+        setting_menu.innerHTML = static_setting_menu;
+        document.body.appendChild(setting_menu);
+
+        await new Promise((s) => {setTimeout(s, 1)});
+
+        setting_menu.style.top = "5vh";
+        setting_menu.style.transform = "none";
+    }
+}
+
+addFavouritesEventListeners = () => {
+    const blocks = document.querySelectorAll('.BlockCover');
+    var dragItem = null, endItem = null;
+
+    blocks.forEach((elem, index) => {
+        // right click listener
+        elem.addEventListener('contextmenu', event=> {
+            event.preventDefault();
+            removeFavouritAlert(index);
+            // stop hide favourite page for 1ms
+            occupied = true;
+            setTimeout(()=>{ occupied = false; }, 1)
+        });
+
+        // drag to switch order
+        elem.parentElement.addEventListener("dragstart", event=>{
+            dragItem = index;
+        })
+
+        elem.addEventListener("dragover", event=>{
+            event.preventDefault();
+        })
+
+        elem.addEventListener("dragenter", event=>{
+            elem.parentElement.classList.add("Over");
+            endItem = index;
+        })
+
+        elem.addEventListener("dragleave", event=>{
+            elem.parentElement.classList.remove("Over");
+            endItem = null;
+        })
+
+        elem.addEventListener("drop", event=>{
+            elem.parentElement.classList.remove("Over");
+
+            var favourites = JSON.parse(localStorage.getItem("favourites"));
+            favourites.splice(endItem, 0, favourites.splice(dragItem, 1));
+            localStorage.setItem("favourites", JSON.stringify(favourites));
+            redrawFavouritePage();
+        })
+    });
+}
+
+redrawFavouritePage = () => {
+    const page = document.getElementById("FavouritePage");
+    if(page) {
+        page.innerHTML = generateFavouritePage();
+        page.style.transform = "none";
+        addFavouritesEventListeners();
+    }
+}
+
+switchPage = async () => {
+    if(document.getElementById("FavouritePage")) {
+        const page = document.getElementById("FavouritePage");
+        page.style.transform="translateY(100vh)";
+        document.getElementById("content").className = "Show";
+
+        await new Promise((s) => {setTimeout(s, 1000)});
+        page.remove();
+    }
+        
+    else {
+        const favourite_page = document.createElement("div");
+        favourite_page.className = "FavouritePage";
+        favourite_page.id = "FavouritePage";
+        favourite_page.innerHTML = generateFavouritePage();
+
+        document.getElementById("side_pages").appendChild(favourite_page);
+        addFavouritesEventListeners();
+
+        await new Promise((s) => {setTimeout(s, 1)});
+
+        document.getElementById("content").className = "Hide";
+        favourite_page.style.transform = "none";
+    }
+}
+
+popupAlert = async (content) => {
+    const alert_window = document.createElement("div");
+    alert_window.className = "PopupAlert";
+    alert_window.innerHTML = content;
+    document.body.appendChild(alert_window);
+
+    await new Promise((s)=>setTimeout(s, 100));
+
+    alert_window.style.bottom = "55vh";
+    
+    setTimeout(() => alert_window.remove(), 3000);
+}
+
+hideAlertWindow = async () => {
+    const cover = document.getElementById("Cover");
+    cover.className = "Hide";
+    await new Promise((s)=>setTimeout(s, 1000));
+    cover.remove();
+}
+
+AlertWindow = async (innerHTML) => {
+
+    const cover = document.createElement("div");
+    cover.className = 'Cover';
+    cover.id = "Cover";
+
+    const window = document.createElement("div");
+    window.className = "BlockAlert";
+    window.innerHTML = innerHTML;
+    
+    cover.appendChild(window);
+    document.body.appendChild(cover);
+
+    await new Promise((s) => {setTimeout(s, 1)});
+
+    window.style.transform = "scale(1)";
+
+}
+
+newFavouriteAlert = () => {
+    AlertWindow(addNewFavourite);
+}
+
+removeFavouritAlert = (index) => {
+    AlertWindow("Are you sure you want to<br>remove this bookmark?<br>"+
+                "<button onclick='removeFavouritSubmit("+index+")'>Confirm</button>"+
+                "<button onclick='hideAlertWindow()'>Cancel</button>");
+}
+
+closeUserManual = async (cover, manual) => {
+    manual.style.transform = "scale(0.1)";
+    await new Promise((s)=>{setTimeout(s, 1000)});
+    manual.remove();
+    cover.remove();
+}
+
+userManual = async () => {
+
+    generateSettingMenu();
+
+    const cover = document.createElement("div");
+    cover.className = "Cover";
+
+    const manual = document.createElement("div");
+    manual.id = "UserManual";
+    manual.className = "UserManual";
+    manual.innerHTML = static_user_manual;
+
+    cover.appendChild(manual);
+    document.body.appendChild(cover);
+
+    await new Promise((s)=>{setTimeout(s, 1)});
+
+    manual.style.transform = "none";
+
+    cover.addEventListener('click', () => closeUserManual(cover, manual));
+}
+
+window.onload = () => {
+    loadContent();
+    document.body.addEventListener("contextmenu", event => {
+        event.preventDefault();
+        if(!occupied)
+            switchPage();
+    });
+};

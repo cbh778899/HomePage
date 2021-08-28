@@ -1,0 +1,308 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: url('../pics/background.png');
+}
+
+.Cover {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+}
+
+.Dark {
+    background-color: rgba(211, 211, 211, 0.3);
+}
+
+.copyright {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 3vh;
+    width: 100vw;
+    background-color: rgba(211, 211, 211, 0.5);
+    text-align: center;
+    line-height: 3vh;
+    font-size: small;
+    z-index: 10;
+}
+
+.FunctionBtns {
+    fill: none;
+    background: none;
+    border: none;
+    position: fixed;
+    right: 2vh;
+    top: 2vh;
+    z-index: 10;
+}
+
+.Hide {
+    opacity: 0;
+    transition-duration: 1s;
+}
+
+.Show { 
+    opacity: 1;
+    transition-duration: 1s;
+}
+
+.SearchForm {
+    height: 10vh;
+    width: 30vw;
+    text-align: center;
+    position: absolute;
+    top: 30vh;
+    left: 35vw;
+}
+
+.SearchBar {
+    height: 4vh;
+    width: 15vw;
+    text-align: center;
+    margin-bottom: 10px;
+    border-radius: 50px;
+    border: none;
+    background-color: rgba(211, 211, 211, 0.5);
+    transition-duration: 1s;
+}
+
+.SearchBar:hover {
+    width: 25vw;
+    font-size: large;
+    background-color: rgba(211, 211, 211, 0.7);
+    transition-duration: 1s;
+}
+
+.SearchBar:focus {
+    width: 25vw;
+    font-size: large;
+    background-color: rgba(211, 211, 211, 0.7);
+    transition-duration: 1s;
+    outline: none;
+}
+
+.FunctionBtns img {
+    height: 2vh;
+    width: 2vh;
+    color: lightgray;
+}
+
+.FavouritePage {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateY(100vh);
+    background-color: rgba(211, 211, 211, 0.3);
+    transition-duration: 1s;
+    text-align: center;
+}
+
+.FavouritePage h1 {
+    margin-top: 10vh;
+}
+
+.FavouritePage .Favourites {
+    height: 50vh;
+    width: 50vw;
+    margin-left: 25vw;
+    margin-top: 5vh;
+    overflow-y: auto;
+    /* border: 1px solid black; */
+}
+
+.FavouritePage .Favourites .SignleBlock {
+    height: 15vh;
+    width: 6vw;
+    display: block;
+    border-radius: 5px;
+    border: 1px solid gray;
+    background-color: rgba(128, 128, 128, 0.5);
+    box-shadow: 3px 3px 5px rgba(128, 128, 128, 0.6);
+    margin-top: 2vh;
+    margin-right: 0.5vw;
+    margin-left: 0.5vw;
+    color: white;
+    float: left;
+    text-decoration: none;
+}
+
+.FavouritePage .Favourites .Over {
+    transform: scale(0.9);
+    opacity: 0.7;
+}
+
+.FavouritePage .Favourites::-webkit-scrollbar {
+    display: none;
+}
+
+.FavouritePage .Favourites .SignleBlock img {
+    width: 8vh;
+    height: 8vh;
+    border-radius: 8vh;
+    margin-top: 1.5vh;
+}
+
+.FavouritePage .Favourites .AddNew {
+    padding-top: 1.5vh;
+    height: 13.5vh;
+}
+
+.FavouritePage .Favourites .AddNew img {
+    background-color: rgba(211, 211, 211, 0.3);
+}
+
+.FavouritePage .Favourites .SignleBlock p {
+    margin-top: 1vh;
+}
+
+.FavouritePage .Favourites .SignleBlock .BlockCover {
+    height: 15vh;
+    width: 6vw;
+    position: absolute;
+}
+
+.FavouritePage .Favourites .SignleBlock:hover {
+    background-color: rgba(104, 104, 104, 0.8);
+    margin-left: 0.4vw;
+    margin-right: 0.6vw;
+    margin-top: 1.4vh;
+    margin-bottom: 0.6vh;
+}
+
+.PopupAlert {
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid black;
+    border-radius: 5px;
+    height: 5vh;
+    width: 20vw;
+    position: fixed;
+    bottom: -5vh;
+    left: 40vw;
+    text-align: center;
+    line-height: 5vh;
+    transition-duration: 1s;
+}
+
+.BlockAlert {
+    height: 28vh;
+    width: 29vw;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 30vh;
+    left: 35vw;
+    transform: scale(0.1);
+    transition-duration: 1s;
+    border-radius: 15px;
+    color: white;
+    padding-left: 3vw;
+    padding-top: 2vh;
+    font-size: 3vh;
+}
+
+.BlockAlert input {
+    width: 16vw;
+    height: 3vh;
+    margin-bottom: 1vh;
+    padding-left: 1vw;
+    border-radius: 50px;
+}
+
+.BlockAlert input:focus {
+    outline: none;
+}
+
+.BlockAlert button {
+    width: 7vw;
+    height: 4vh;
+    border-radius: 50px;
+    margin-top: 3vh;
+    font-size: 2vh;
+    margin-right: 2vw;
+}
+
+.SettingMenu {
+    position: fixed;
+    border: 1px solid black;
+    height: 20vh;
+    width: 10vw;
+    top: -4.5vh;
+    right: 1vw;
+    padding-bottom: 1vh;
+    border-radius: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+    transform: scaleY(0.1);
+    transition-duration: 1s;
+    overflow-y: auto;
+}
+
+.SettingMenu::-webkit-scrollbar {
+    display: none;
+}
+
+.SettingMenu button {
+    width: 9vw;
+    height: 3.5vh;
+    fill: none;
+    background: none;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition-duration: 0.5s;
+    margin-left: 0.5vw;
+    margin-top: 1vh;
+}
+
+.SettingMenu button:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.SettingMenu hr {
+    color: rgba(128, 128, 128, 0.3);
+    margin: 1vw;
+    margin-top: 1vh;
+    margin-bottom: 0;
+}
+
+.Time {
+    position: absolute;
+    top: 18vh;
+    left: 45vw;
+    width: 10vw;
+    height: 7vh;
+    text-align: center;
+    font-size: 5vh;
+    color: white;
+}
+
+.UserManual {
+    position: fixed;
+    height: 100vh;
+    width: 80vw;
+    left: 10vw;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    overflow-y: auto;
+    font-size: large;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    transform: scale(0.1);
+    transition-duration: 1s;
+}
+
+.UserManual .Part {
+    position: absolute;
+    width: 38vw;
+    height: 98vh;
+    padding-left: 2vw;
+    padding-top: 2vh;
+}
+
+.UserManual .Left {
+    border-right: 1px solid white;
+}
+
+.UserManual hr {
+    margin-right: 2vw;
+}
