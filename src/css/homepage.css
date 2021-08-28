@@ -291,16 +291,22 @@ body {
     transition-duration: 1s;
 }
 
+.UserManual::-webkit-scrollbar {
+    display: none;
+}
+
 .UserManual .Part {
     position: absolute;
     width: 38vw;
-    height: 98vh;
+    /* height: 98vh; */
     padding-left: 2vw;
     padding-top: 2vh;
+    padding-bottom: 2vh;
 }
 
-.UserManual .Left {
-    border-right: 1px solid white;
+.UserManual .Right {
+    border-left: 1px solid white;
+    right: 0;
 }
 
 .UserManual hr {
