@@ -105,12 +105,11 @@ body {
 }
 
 .FavouritePage .Favourites {
-    height: 50vh;
+    height: 52vh;
     width: 50vw;
     margin-left: 25vw;
     margin-top: 5vh;
     overflow-y: auto;
-    /* border: 1px solid black; */
 }
 
 .FavouritePage .Favourites .SignleBlock {
