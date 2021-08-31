@@ -100,6 +100,14 @@ body {
     text-align: center;
 }
 
+.Hidden {
+    transform: translateX(100vw);
+}
+
+.ToolPage {
+    transform: translateX(-100vw);
+}
+
 .FavouritePage h1 {
     margin-top: 10vh;
 }
@@ -158,6 +166,12 @@ body {
 }
 
 .FavouritePage .Favourites .SignleBlock .BlockCover {
+    height: 15vh;
+    width: 6vw;
+    position: absolute;
+}
+/* the same as blockcover, but for hidden collections */
+.FavouritePage .Favourites .SignleBlock .HiddenBlockCover {
     height: 15vh;
     width: 6vw;
     position: absolute;

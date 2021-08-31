@@ -2,6 +2,7 @@ const languagePack = {
     "Chinese": {
         "searchbar_placeholder": "开始搜索",
         "my_favourites": "我的收藏",
+        "my_hidden_favourites": "我的隐藏收藏",
         "add_favourite": "添加一个收藏",
         "ask_site_name": "网站名称",
         "ask_site_link": "网址",
@@ -32,6 +33,7 @@ const languagePack = {
     "English": {
         "searchbar_placeholder": "Search for something",
         "my_favourites": "My Favourites",
+        "my_hidden_favourites": "My Hidden Favourites",
         "add_favourite": "Add Favourite",
         "ask_site_name": "Site Name",
         "ask_site_link": "Site Link",
@@ -80,22 +82,43 @@ const favouritePage = [
     // 0
     "<h1>"+getText("my_favourites")+"</h1>" +
     "<div class='Favourites'>",
+
     // 1
         "<a href='javascript:void(0);' class='SignleBlock AddNew' onclick='newFavouriteAlert()' title='"+getText("add_favourite")+"'>" +
             "<img src='src/pics/plus.svg' />" +
         "</a>" +
-    "</div>"
+    "</div>",
+    
+    // 2
+    "<h1>"+getText("my_hidden_favourites")+"</h1>" +
+    "<div class='Favourites'>",
+
+    // 3
+        "<a href='javascript:void(0);' class='SignleBlock AddNew' onclick='newFavouriteAlert(true)' title='"+getText("add_favourite")+"'>" +
+            "<img src='src/pics/plus.svg' />" +
+        "</a>" +
+    "</div>",
 ];
 
-const addNewFavourite = 
+const addNewFavourite = [
+    // 0
     "<label>"+getText("ask_site_name")+"</label><br>" +
     "<input type='text' id='site_name'><br>" +
     "<label>"+getText("ask_site_link")+"</label><br>" +
-    "<input type='text' id='site_link'><br>" +
-    "<button onclick='favouriteSubmit()'>"+getText("submit")+"</button>" +
-    "<button onclick='hideAlertWindow()'>"+getText("cancel")+"</button>";
+    "<input type='text' id='site_link'><br>",
+    // 1
+    "<button onclick='favouriteSubmit()'>"+getText("submit")+"</button>",
+    // 2
+    "<button onclick='favouriteSubmit(true)'>"+getText("submit")+"</button>",
+    // 3
+    "<button onclick='hideAlertWindow()'>"+getText("cancel")+"</button>"
+];
 
-const static_setting_menu = 
+var static_setting_menu;
+
+loadSettingMenu = () => {
+    static_setting_menu =
+
     "<button onclick="+'"'+"resetFavourite('reset')"+'"'+">"+getText("reset_default_bookmark")+"</button>" +
     "<button onclick="+'"'+"resetFavourite('remove')"+'"'+">"+getText("remove_all_bookmarks")+"</button>" +
     "<hr>" +
@@ -112,7 +135,7 @@ const static_setting_menu =
     "<button onclick='resetAll()'>"+getText("reset_all_settings")+"</button>" +
     "<button onclick='userManual()'>"+getText("read_user_manual")+"</button>" +
     "<button onclick='authorHomePage()'>"+getText("author_homepage")+"</button>";
-
+}
 const static_user_manual =
     "<div class='Part'>" +
         "<h1>用户手册</h1>" +
@@ -136,10 +159,19 @@ const static_user_manual =
         "<hr>" +
         "<h3>&bull; 全局 </h3>" +
         "<p>在页面的任意地方点击鼠标右键可以打开书签页。</p>" +
+        "<p>用W和S键同样可以开关书签页。</p>" +
         "<p>若想更改背景图片，请将新图片放入src/pics/，并将其更名为background.png。</p>" +
+        "<hr>" +
+        "<h3>&bull; 工具栏 </h3>" +
+        "<p>在主界面按D可以打开工具栏，按A可以关闭工具栏。</p>" +
+        "<p>工具栏的工具（以后会有更新）：</p>" +
+        "<p>&nbsp;&nbsp;&bull; 计算器</p>" +
         "<hr>" +
         "<h3>&bull; 导入 / 导出设置 </h3>" +
         "<p>导出设置将会下载 homepage.setting 文件， 请保存好此文件。<br>当你导入设置时，选择该文件即可自动导入。</p>" +
+        "<hr>" +
+        "<h3>&bull; 隐藏功能 </h3>" +
+        "<p>在书签页点击A和D，说不定会有意外发现…?</p>" +
         "<hr>" +
         "<p>&bull; 左键单击任意位置退出此页</p>" +
     "</div>" +
@@ -165,12 +197,21 @@ const static_user_manual =
         "<hr>" +
         "<h3>&bull; Global: </h3>" +
         "<p>Right click on anypart of this website can display your favourites.</p>" +
+        "<p>Press W and S can also open/close favourite page.</p>" +
         "<p>If you want to change background image, please place the new image at src/pics/<br>and change its name to background.png.</p>" +
+        "<hr>" +
+        "<h3>&bull; Tools page </h3>" +
+        "<p>Press D on the main page can open tools, and press A to close it.</p>" +
+        "<p>Tools in page (There will be updates in the future):</p>" +
+        "<p>&nbsp;&nbsp;&bull; Calculator</p>" +
         "<hr>" +
         "<h3>&bull; Save / Load settings </h3>" +
         "<p>When save settings, a file called homepage.setting will be downloaded.</p>" +
         "<p>Please keep this file safely and when you want to load setting, just select this file</p>" +
         "<p>And settings will be loaded automatically.</p>" +
+        "<hr>" +
+        "<h3>&bull; Hidden function </h3>" +
+        "<p>There might be some surprise when click A and D at favourite page…?</p>" +
         "<hr>" +
         "<p>&bull; Left-click anywhere to left this page.</p>" +
     "</div>";
@@ -197,37 +238,39 @@ searchSubmit = (event) => {
 
         document.body.appendChild(search);
         search.click();
-        document.body.removeChild(search);
+        search.remove();
         kwrds.value = "";
     } else
         popupAlert(getText("ask_input"));
 }
 
-favouriteSubmit = () => {
+favouriteSubmit = (hidden = false) => {
 
     const site_name = document.getElementById("site_name").value;
     var site_link = document.getElementById("site_link").value;
 
     if(site_name && site_link) {
-        var favourites = JSON.parse(localStorage.getItem("favourites"));
-        var existed = false;
+        var favourites = JSON.parse((hidden ? localStorage.getItem("hidden_favourites") : localStorage.getItem("favourites")));
 
         if(!/^((http)|(https):\/\/)/.test(site_link))
             site_link = "https://"+site_link;
 
-        for(var i = 0; i < favourites.length; i++) {
-            f = JSON.parse(favourites[i]);
+        if(favourites) {
+            var existed = false;
+            for(var i = 0; i < favourites.length; i++) {
+                f = JSON.parse(favourites[i]);
 
-            if(f.name === site_name && f.site === site_link) {
-                existed = true;
-                break;
+                if(f.name === site_name && f.site === site_link) {
+                    existed = true;
+                    break;
+                }
             }
-        }
+            if(!existed)
+                favourites.push(JSON.stringify({name: site_name, site: site_link }));
+        } else
+            favourites = [JSON.stringify({name: site_name, site: site_link })];
 
-        if(!existed)
-            favourites.push(JSON.stringify({name: site_name, site: site_link }));
-
-        localStorage.setItem("favourites", JSON.stringify(favourites));
+        localStorage.setItem((hidden ? "hidden_favourites" : "favourites"), JSON.stringify(favourites));
         hideAlertWindow();
         popupAlert(getText("add_new_favourite_success"));
         redrawFavouritePage();
@@ -237,9 +280,10 @@ favouriteSubmit = () => {
 }
 
 removeFavouritSubmit = (index) => {
-    var favourites = JSON.parse(localStorage.getItem("favourites"));
+    const hidden_favourites = document.getElementById("HiddenPage");
+    var favourites = JSON.parse((hidden_favourites ? localStorage.getItem("hidden_favourites") : localStorage.getItem("favourites")));
     favourites.splice(index, 1);
-    localStorage.setItem("favourites", JSON.stringify(favourites));
+    localStorage.setItem((hidden_favourites ? "hidden_favourites" : "favourites"), JSON.stringify(favourites));
     hideAlertWindow();
     popupAlert(getText("remove_favourite_success"));
     redrawFavouritePage();
@@ -257,6 +301,9 @@ loadTime = () => {
 }
 
 loadContent = () => {
+
+    loadSettingMenu();
+
     const content = document.getElementById("content");
     var default_search_engine;
     if(localStorage.getItem("default_search_engine")) {
@@ -312,10 +359,10 @@ authorHomePage = () => {
     line.remove();
 }
 
-generateFavouritePage = () => {
+generateFavouritePage = (hidden = false) => {
 
-    var favourites = JSON.parse(localStorage.getItem("favourites"));
-    var page = favouritePage[0];
+    var favourites = JSON.parse((hidden ? localStorage.getItem("hidden_favourites") : localStorage.getItem("favourites")));
+    var page = (hidden ? favouritePage[2] : favouritePage[0]);
 
     if(favourites) {
         
@@ -324,32 +371,37 @@ generateFavouritePage = () => {
 
             page += 
             "<a href='" + f.site + "' class='SignleBlock' target='_blank' title='" + f.site + "'>" +
-                "<div class='BlockCover'></div>" +
+                ( hidden ? "<div class='HiddenBlockCover'></div>" : "<div class='BlockCover'></div>") +
                 "<img src='" + f.site + "/favicon.ico'>" +
                 "<p>" + f.name + "</p>" +
             "</a>";
         }
 
-        page += favouritePage[1];
+        page += (hidden ? favouritePage[3] : favouritePage[1]);
         
         return page;
 
     } else {
-        favourites = [
-            {site: "https://www.baidu.com", name: "百度"},
-            {site: "https://www.google.com", name: "谷歌"},
-            {site: "https://www.bilibili.com", name: "哔哩哔哩"},
-            {site: "https://www.youtube.com", name: "Youtube"},
-            {site: "https://fanyi.baidu.com", name: "百度翻译"},
-            {site: "https://translate.google.com", name: "谷歌翻译"}
-        ];
+        if(hidden) {
+            page += favouritePage[3];
+            return page;
+        } else {
+            favourites = [
+                {site: "https://www.baidu.com", name: "百度"},
+                {site: "https://www.google.com", name: "谷歌"},
+                {site: "https://www.bilibili.com", name: "哔哩哔哩"},
+                {site: "https://www.youtube.com", name: "Youtube"},
+                {site: "https://fanyi.baidu.com", name: "百度翻译"},
+                {site: "https://translate.google.com", name: "谷歌翻译"}
+            ];
 
-        var fav_arr = [];
-        favourites.forEach((f) => {
-            fav_arr.push(JSON.stringify(f));
-        });
-        localStorage.setItem("favourites", JSON.stringify(fav_arr));
-        return generateFavouritePage();
+            var fav_arr = [];
+            favourites.forEach((f) => {
+                fav_arr.push(JSON.stringify(f));
+            });
+            localStorage.setItem("favourites", JSON.stringify(fav_arr));
+            return generateFavouritePage();
+        }
     }
 }
 
@@ -375,8 +427,42 @@ generateSettingMenu = async () => {
     }
 }
 
-addFavouritesEventListeners = () => {
-    const blocks = document.querySelectorAll('.BlockCover');
+showHiddenFavourites = async (event) => {
+    operateGlobalEventListener('remove');
+    if(event.key === 'a' || event.key === 'A') {
+        const page = document.getElementById("FavouritePage");
+        const hidden_page = document.createElement("div");
+        hidden_page.id = "HiddenPage";
+        hidden_page.classList.add("FavouritePage", "Hidden");
+        hidden_page.innerHTML = generateFavouritePage(true);
+        document.getElementById("side_pages").appendChild(hidden_page);
+        document.body.removeEventListener("keypress", showHiddenFavourites);
+        document.body.addEventListener("keypress", removeHiddenFavourites);
+        addFavouritesEventListeners(true);
+        
+        await new Promise((s) => {setTimeout(s, 1)});
+        page.style.opacity = '0';
+        hidden_page.style.transform = 'none';
+    }
+}
+
+removeHiddenFavourites = async (event) => {
+    if(event.key === 'd' || event.key === 'D') {
+        operateGlobalEventListener('add');
+        const page = document.getElementById("FavouritePage");
+        const hidden_page = document.getElementById("HiddenPage");
+        document.body.addEventListener("keypress", showHiddenFavourites);
+        document.body.removeEventListener("keypress", removeHiddenFavourites);
+
+        page.style.opacity = '1';
+        hidden_page.style.transform = 'translateX(100vw)';
+        await new Promise((s) => {setTimeout(s, 1000)});
+        hidden_page.remove();
+    }
+}
+
+addFavouritesEventListeners = (hidden = false) => {
+    const blocks = document.querySelectorAll((hidden ? '.HiddenBlockCover' : '.BlockCover'));
     var dragItem = null, endItem = null;
 
     blocks.forEach((elem, index) => {
@@ -421,10 +507,16 @@ addFavouritesEventListeners = () => {
 
 redrawFavouritePage = () => {
     const page = document.getElementById("FavouritePage");
+    const hidden_page = document.getElementById("HiddenPage");
     if(page) {
-        page.innerHTML = generateFavouritePage();
-        page.style.transform = "none";
-        addFavouritesEventListeners();
+        if(hidden_page) {
+            hidden_page.innerHTML = generateFavouritePage(true);
+            hidden_page.style.transform = "none";
+        } else {
+            page.innerHTML = generateFavouritePage();
+            page.style.transform = "none";
+        }
+        addFavouritesEventListeners(hidden_page ? true : false);
     }
 }
 
@@ -434,8 +526,11 @@ switchPage = async () => {
         page.style.transform="translateY(100vh)";
         document.getElementById("content").className = "Show";
 
+        document.body.removeEventListener("keypress", showHiddenFavourites);
+
         await new Promise((s) => {setTimeout(s, 1000)});
         page.remove();
+        toolPageDeined = false;
     }
         
     else {
@@ -446,11 +541,13 @@ switchPage = async () => {
 
         document.getElementById("side_pages").appendChild(favourite_page);
         addFavouritesEventListeners();
+        document.body.addEventListener("keypress", showHiddenFavourites);
 
         await new Promise((s) => {setTimeout(s, 1)});
 
         document.getElementById("content").className = "Hide";
         favourite_page.style.transform = "none";
+        toolPageDeined = true;
     }
 }
 
@@ -468,6 +565,12 @@ popupAlert = async (content) => {
 }
 
 hideAlertWindow = async () => {
+
+    if(!document.getElementById("HiddenPage")) {
+        operateGlobalEventListener('add');
+        document.body.addEventListener("keypress", showHiddenFavourites);
+    }
+
     const cover = document.getElementById("Cover");
     cover.className = "Hide";
     await new Promise((s)=>setTimeout(s, 1000));
@@ -475,6 +578,9 @@ hideAlertWindow = async () => {
 }
 
 AlertWindow = async (innerHTML) => {
+
+    operateGlobalEventListener('remove');
+    document.body.removeEventListener("keypress", showHiddenFavourites);
 
     const cover = document.createElement("div");
     cover.className = 'Cover';
@@ -493,8 +599,11 @@ AlertWindow = async (innerHTML) => {
 
 }
 
-newFavouriteAlert = () => {
-    AlertWindow(addNewFavourite);
+newFavouriteAlert = (hidden = false) => {
+    if(hidden)
+        AlertWindow(addNewFavourite[0]+addNewFavourite[2]+addNewFavourite[3]);
+    else
+        AlertWindow(addNewFavourite[0]+addNewFavourite[1]+addNewFavourite[3]);
 }
 
 removeFavouritAlert = (index) => {
@@ -504,6 +613,8 @@ removeFavouritAlert = (index) => {
 }
 
 closeUserManual = async (cover, manual) => {
+    operateGlobalEventListener('add');
+    toolPageDeined = false;
     manual.style.transform = "scale(0.1)";
     await new Promise((s)=>{setTimeout(s, 1000)});
     manual.remove();
@@ -512,6 +623,8 @@ closeUserManual = async (cover, manual) => {
 
 userManual = async () => {
 
+    operateGlobalEventListener('remove');
+    toolPageDeined = true;
     generateSettingMenu();
 
     const cover = document.createElement("div");
@@ -537,6 +650,7 @@ SLSetting = (action) => {
         const settings = {
             language_pack: localStorage.getItem("language_pack"),
             favourites: localStorage.getItem("favourites"),
+            hidden_favourites: localStorage.getItem("hidden_favourites"),
             default_search_engine: localStorage.getItem("default_search_engine")
         };
 
@@ -548,7 +662,7 @@ SLSetting = (action) => {
 
         document.body.appendChild(download);
         download.click();
-        document.body.removeChild(download);
+        download.remove();
 
     } else if(action === "load") {
 
@@ -560,6 +674,7 @@ SLSetting = (action) => {
                 const result = JSON.parse(reader.result);
                 localStorage.setItem("language_pack", result.language_pack);
                 localStorage.setItem("favourites", result.favourites);
+                localStorage.setItem("hidden_favourites", result.hidden_favourites);
                 localStorage.setItem("default_search_engine", result.default_search_engine);
                 location.reload();
             }
@@ -571,15 +686,71 @@ SLSetting = (action) => {
         get_setting.onchange = handleSettingFile;
         document.body.appendChild(get_setting);
         get_setting.click();
-        document.body.removeChild(get_setting);
+        get_setting.remove();
+    }
+}
+
+globalRightClick = () => {
+    if(!occupied)
+        switchPage();
+}
+
+globalKeyPress = (event) => {
+    if(!occupied &&
+        (event.key === 'W' ||
+        event.key === 'w' &&
+        this.document.getElementById("FavouritePage") === null) ||
+        (event.key === 'S' ||
+        event.key === 's' &&
+        this.document.getElementById("FavouritePage")))
+
+        switchPage();
+}
+
+operateGlobalEventListener = (action) => {
+
+    if(action === 'add') {
+        document.body.addEventListener("contextmenu", globalRightClick);
+        document.body.addEventListener("keypress", globalKeyPress);
+    } else if(action === 'remove') {
+        document.body.removeEventListener("contextmenu", globalRightClick);
+        document.body.removeEventListener("keypress", globalKeyPress);
+    }
+}
+
+
+
+var toolPageDeined = false;
+
+showToolPage = async (event) => {
+    if((event.key === 'a' || event.key === 'A') && toolPageDeined) {
+        var tool_page = document.getElementById("ToolPage");
+        if(tool_page)
+            toolPageDeined = false;
+        tool_page.style.transform = 'translateX(-100vw)';
+        document.getElementById("content").className = "Show";
+        await new Promise((s)=>{setTimeout(s, 1000)});
+        tool_page.remove();
+        operateGlobalEventListener('add');
+    }
+    else if((event.key === 'd' || event.key === 'D') && !toolPageDeined) {
+        operateGlobalEventListener('remove');
+        toolPageDeined = true;
+        const toolPage = document.createElement("div");
+        toolPage.id = 'ToolPage';
+        toolPage.classList.add("FavouritePage", "ToolPage");
+        document.getElementById("side_pages").appendChild(toolPage);
+        new Calculator();
+
+        await new Promise((s)=>{setTimeout(s, 1)});
+        document.getElementById("content").className = "Hide";
+        toolPage.style.transform = 'none';
     }
 }
 
 window.onload = () => {
     loadContent();
-    document.body.addEventListener("contextmenu", event => {
-        event.preventDefault();
-        if(!occupied)
-            switchPage();
-    });
+    document.body.addEventListener("contextmenu", (event)=>{event.preventDefault()});
+    operateGlobalEventListener('add');
+    document.body.addEventListener("keypress", showToolPage);
 };

@@ -1,0 +1,77 @@
+.Calculator {
+    height: 50vh;
+    width: 17vw;
+    position: absolute;
+    top: 20vh;
+    left: 10vw;
+    border-radius: 15px;
+    border: 1px solid black;
+    box-shadow: 5px 5px 5px gray;
+}
+
+.Calculator input[type='text'] {
+    height: 8vh;
+    width: 14vw;
+    margin-top: 2vh;
+    border: 1px solid gray;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px gray;
+    padding-right: 0.5vw;
+    padding-left: 0.5vw;
+    text-align: right;
+    font-size: 3vh;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.Calculator input[type='text']:focus {
+    outline: none;
+}
+
+.Calculator .InputNumbers {
+    width: 12vw;
+    height: 15vw;
+}
+
+.Calculator .TopSymbols {
+    height: 3vh;
+    width: 16vw;
+    margin-top: 3vh;
+    margin-bottom: 1vw;
+}
+
+.Calculator .RightSymbols {
+    height: 15vw;
+    width: 3vw;
+    float: right;
+    margin-right: 1vw;
+}
+
+.Calculator .Button {
+    height: 3vw;
+    width: 3vw;
+    border-radius: 5px;
+    border: 1px solid black;
+    box-shadow: 2px 2px 3px gray;
+    margin-bottom: 1vw;
+    margin-left: 1vw;
+    font-size: 2vh;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.Calculator .TopSymbols .Symbol {
+    height: 3vh;
+}
+
+.Calculator .RightSymbols .Symbol {
+    height: 7vw;
+    margin-left: 0;
+}
+
+.Calculator .InputNumbers .Zero {
+    height: 3vw;
+    width: 7vw;
+}
+
+.Calculator .Clicked {
+    background-color: rgba(173, 216, 230, 0.5);
+}
