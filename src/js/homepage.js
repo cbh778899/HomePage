@@ -725,13 +725,14 @@ var toolPageDeined = false;
 showToolPage = async (event) => {
     if((event.key === 'a' || event.key === 'A') && toolPageDeined) {
         var tool_page = document.getElementById("ToolPage");
-        if(tool_page)
+        if(tool_page) {
             toolPageDeined = false;
-        tool_page.style.transform = 'translateX(-100vw)';
-        document.getElementById("content").className = "Show";
-        await new Promise((s)=>{setTimeout(s, 1000)});
-        tool_page.remove();
-        operateGlobalEventListener('add');
+            tool_page.style.transform = 'translateX(-100vw)';
+            document.getElementById("content").className = "Show";
+            await new Promise((s)=>{setTimeout(s, 1000)});
+            tool_page.remove();
+            operateGlobalEventListener('add');
+        }
     }
     else if((event.key === 'd' || event.key === 'D') && !toolPageDeined) {
         operateGlobalEventListener('remove');
