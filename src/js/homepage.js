@@ -300,6 +300,17 @@ loadTime = () => {
     setTimeout(loadTime, 1000);
 }
 
+blockInputActionListener = async (event) => {
+    const k = event.key;
+    if(k === 'd' || k === 'D' || k === 'w' || k === 'W') {
+        operateGlobalEventListener("remove");
+        toolPageDeined = true;
+        await new Promise((s) => {setTimeout(s, 1)});
+        operateGlobalEventListener("add");
+        toolPageDeined = false;
+    }
+}   
+
 loadContent = () => {
 
     loadSettingMenu();
@@ -321,6 +332,8 @@ loadContent = () => {
             "<input type='radio' "+ (default_search_engine === "Google" ? "checked" : "") +" value='google' name='SearchEngine' title='"+getText("search_use_google")+"'>" +
             "<input type='radio' "+ (default_search_engine === "Bing" ? "checked" : "") +" value='bing' name='SearchEngine' title='"+getText("search_use_bing")+"'>" +
         "</form>";
+
+    document.getElementById("SearchBar").addEventListener("keypress", blockInputActionListener);
 
     loadTime();
 }
