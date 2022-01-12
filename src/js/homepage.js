@@ -385,7 +385,8 @@ generateFavouritePage = (hidden = false) => {
             page += 
             "<a href='" + f.site + "' class='SignleBlock' target='_blank' title='" + f.site + "'>" +
                 ( hidden ? "<div class='HiddenBlockCover'></div>" : "<div class='BlockCover'></div>") +
-                "<img src='" + f.site + "/favicon.ico'>" +
+                // "<img src='" + f.site + "/favicon.ico' alt='src/pics/gear-wide.svg'>" +
+                `<img src='${f.site}/favicon.ico' onerror="this.onerror=null; this.src='src/pics/globe2.svg'">` +
                 "<p>" + f.name + "</p>" +
             "</a>";
         }

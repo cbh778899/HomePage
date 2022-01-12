@@ -179,10 +179,10 @@ body {
 
 .FavouritePage .Favourites .SignleBlock:hover {
     background-color: rgba(104, 104, 104, 0.8);
-    margin-left: 0.4vw;
+    /* margin-left: 0.4vw;
     margin-right: 0.6vw;
     margin-top: 1.4vh;
-    margin-bottom: 0.6vh;
+    margin-bottom: 0.6vh; */
 }
 
 .PopupAlert {
@@ -234,6 +234,10 @@ body {
     margin-top: 3vh;
     font-size: 2vh;
     margin-right: 2vw;
+}
+
+.BlockAlert button:hover {
+    cursor: pointer;
 }
 
 .SettingMenu {
